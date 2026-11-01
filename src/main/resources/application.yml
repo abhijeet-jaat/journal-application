@@ -1,0 +1,33 @@
+spring:
+  data:
+    mongodb:
+      uri: ${MONGODB_URL}
+      database: journalDB
+      auto-index-creation: true
+
+  redis:
+    uri: ${REDIS_URL}
+    #host: ${REDIS_HOST}
+    #port: 16891
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SMTP_MAIL}
+    password: ${SPTM_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+server:
+  port: 8080
+
+#  servlet:
+#    context-path: /journal
+
+weather:
+  api:
+    key: ${ WEATHER_API_KEY}
