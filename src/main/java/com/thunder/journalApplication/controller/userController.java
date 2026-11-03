@@ -4,6 +4,8 @@ import com.thunder.journalApplication.entity.user;
 import com.thunder.journalApplication.repository.userRepository;
 import com.thunder.journalApplication.services.WeatherServices;
 import com.thunder.journalApplication.services.userServices;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+@Tag(name ="User APIs", description = "Read, Update, & Delete User")
 public class userController {
 
     @Autowired
@@ -25,6 +28,7 @@ public class userController {
     private WeatherServices WeatherServices;
 
     @GetMapping
+    @Operation(summary = "Get User info")
     public ResponseEntity<?> greeting(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         WeatherResponse weatherResponse = WeatherServices.getWeather("Mumbai");
@@ -36,6 +40,7 @@ public class userController {
     }
 
     @PutMapping
+    @Operation(summary = "Update User Details")
     public ResponseEntity<?> updateUser(@RequestBody user User){
     Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
     String userName = authentication.getName();
@@ -48,10 +53,10 @@ public class userController {
     }
 
     @DeleteMapping
+    @Operation(summary = "Delete User Account")
     public ResponseEntity<?> deleteById(){
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
         UserRepository.deleteByUserName(authentication.getName());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 }  

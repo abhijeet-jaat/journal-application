@@ -4,6 +4,8 @@ import com.thunder.journalApplication.entity.user;
 import com.thunder.journalApplication.services.UserDetailsServicesIMPL;
 import com.thunder.journalApplication.services.userServices;
 import com.thunder.journalApplication.utils.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/public")
+@Tag(name="Public APIs")
 public class PublicController {
 
     @Autowired
@@ -28,15 +31,18 @@ public class PublicController {
 
 
     @GetMapping("/health-check")
+    @Operation(summary = "Check Server Connection")
     public String healthcheck(){
     return "ok";
 }
 
     @PostMapping("/signup")
+    @Operation(summary = "Create Account")
     public void signup(@RequestBody user User){
         UserServices.saveNewUser(User);
     }
     @PostMapping("/login")
+    @Operation(summary = "Login Account, Result(JWT Token)")
     public ResponseEntity<String> login(@RequestBody user User){
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(User.getUserName(),User.getPassword()));
