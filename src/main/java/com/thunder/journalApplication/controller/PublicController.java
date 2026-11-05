@@ -1,5 +1,6 @@
 package com.thunder.journalApplication.controller;
 
+import com.thunder.journalApplication.Dto.UserDto;
 import com.thunder.journalApplication.entity.user;
 import com.thunder.journalApplication.services.UserDetailsServicesIMPL;
 import com.thunder.journalApplication.services.userServices;
@@ -14,6 +15,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+
 @Slf4j
 @RestController
 @RequestMapping("/public")
@@ -38,12 +42,19 @@ public class PublicController {
 
     @PostMapping("/signup")
     @Operation(summary = "Create Account")
-    public void signup(@RequestBody user User){
-        UserServices.saveNewUser(User);
+    public ResponseEntity<String> signup(@Valid @RequestBody UserDto User){
+        user newUser = new user();
+        newUser.setEmail(User.getEmail());
+        newUser.setPassword(User.getPassword());
+        newUser.setUserName(User.getUserName());
+        newUser.setSentimentAnalysis(User.getSentimentAnalysis());
+        UserServices.saveNewUser(newUser);
+        return ResponseEntity.ok("User Createad succesfully");
     }
+
     @PostMapping("/login")
     @Operation(summary = "Login Account, Result(JWT Token)")
-    public ResponseEntity<String> login(@RequestBody user User){
+    public ResponseEntity<String> login(@Valid @RequestBody user User){
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(User.getUserName(),User.getPassword()));
             UserDetails userDetails = userDetailsService.loadUserByUsername(User.getUserName());
