@@ -1,5 +1,6 @@
 package com.thunder.journalApplication.controller;
 
+import com.thunder.journalApplication.Dto.LoginDTO;
 import com.thunder.journalApplication.Dto.UserDto;
 import com.thunder.journalApplication.entity.user;
 import com.thunder.journalApplication.services.UserDetailsServicesIMPL;
@@ -54,10 +55,13 @@ public class PublicController {
 
     @PostMapping("/login")
     @Operation(summary = "Login Account, Result(JWT Token)")
-    public ResponseEntity<String> login(@Valid @RequestBody user User){
+    public ResponseEntity<String> login(@Valid @RequestBody LoginDTO User){
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(User.getUserName(),User.getPassword()));
-            UserDetails userDetails = userDetailsService.loadUserByUsername(User.getUserName());
+            user newUser = new user();
+            newUser.setUserName(User.getUserName());
+            newUser.setPassword(User.getPassword());
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(newUser.getUserName(),User.getPassword()));
+            UserDetails userDetails = userDetailsService.loadUserByUsername(newUser.getUserName());
             String jwt = jwtUtil.generateToken(userDetails.getUsername());
             return new ResponseEntity<>(jwt , HttpStatus.OK);
         } catch (Exception e) {

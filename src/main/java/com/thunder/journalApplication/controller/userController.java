@@ -1,4 +1,5 @@
 package com.thunder.journalApplication.controller;
+import com.thunder.journalApplication.Dto.UserDto;
 import com.thunder.journalApplication.api.response.WeatherResponse;
 import com.thunder.journalApplication.entity.user;
 import com.thunder.journalApplication.repository.userRepository;
@@ -41,13 +42,22 @@ public class userController {
 
     @PutMapping
     @Operation(summary = "Update User Details")
-    public ResponseEntity<?> updateUser(@RequestBody user User){
+    public ResponseEntity<?> updateUser(@RequestBody UserDto User){
+
+        user newUser = new user();
+        newUser.setUserName(User.getUserName());
+        newUser.setPassword(User.getPassword());
+        newUser.setEmail(User.getEmail());
+        newUser.setSentimentAnalysis(User.getSentimentAnalysis());
+
     Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
     String userName = authentication.getName();
         user userInDb = UserServices.findByUserName(userName);
         if (userInDb != null) {
-            userInDb.setUserName(User.getUserName());
-            userInDb.setPassword(User.getPassword());
+            userInDb.setUserName(newUser.getUserName());
+            userInDb.setPassword(newUser.getPassword());
+            userInDb.setEmail(newUser.getEmail());
+            userInDb.setSentimentAnalysis(newUser.getSentimentAnalysis());
             UserServices.saveNewUser(userInDb);
         } return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

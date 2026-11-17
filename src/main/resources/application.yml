@@ -31,3 +31,7 @@ server:
 weather:
   api:
     key: ${WEATHER_API_KEY}
+
+springdoc:
+  swagger-ui:
+    default-models-expand-depth: -1

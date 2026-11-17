@@ -1,5 +1,6 @@
 package com.thunder.journalApplication.controller;
 
+import com.thunder.journalApplication.Dto.UserDto;
 import com.thunder.journalApplication.cache.AppCache;
 import com.thunder.journalApplication.entity.user;
 import com.thunder.journalApplication.services.userServices;
@@ -34,8 +35,13 @@ public class AdminController {
 
     @PostMapping("/create-admin-user")
     @Operation(summary = "Create Admin-USER")
-    public void createUser(@RequestBody user User) {
-        UserServices.saveAdmin(User);
+    public void createUser(@RequestBody UserDto User) {
+        user newUser = new user();
+        newUser.setEmail(User.getEmail());
+        newUser.setPassword(User.getPassword());
+        newUser.setUserName(User.getUserName());
+        newUser.setSentimentAnalysis(User.getSentimentAnalysis());
+        UserServices.saveAdmin(newUser);
     }
 
 

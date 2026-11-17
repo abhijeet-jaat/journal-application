@@ -8,7 +8,8 @@ import io.swagger.v3.oas.models.tags.Tag;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
-
+import org.bson.types.ObjectId;
+import org.springdoc.core.SpringDocUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,6 +19,11 @@ import java.util.Arrays;
 public class SwaggerConfig {
 
     private static final String SECURITY_SCHEME_NAME = "bearerAuth";
+
+//    static {
+//        SpringDocUtils.getConfig()
+//                .addResponseTypeToIgnore(ObjectId.class);
+//    }
 
     @Bean
     public OpenAPI customOpenAPI() {

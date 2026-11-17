@@ -1,5 +1,6 @@
 package com.thunder.journalApplication.entity;
 import com.thunder.journalApplication.enums.Sentiment;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Document(collection = "journal_entries")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class journalEntry {
     @Id
     private ObjectId id;
