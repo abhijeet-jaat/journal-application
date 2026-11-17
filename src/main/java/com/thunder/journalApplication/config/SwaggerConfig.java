@@ -39,9 +39,6 @@ public class SwaggerConfig {
                 .servers(Arrays.asList(
                         new Server()
                                 .url("http://localhost:8080")
-                                .description("local"),
-                        new Server()
-                                .url("http://localhost:8081")
                                 .description("local")
                 ))
 

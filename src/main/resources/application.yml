@@ -33,5 +33,11 @@ weather:
     key: ${WEATHER_API_KEY}
 
 springdoc:
+  api-docs:
+    enabled : true # disable at prod
+    path: /journal-docs
+
   swagger-ui:
+    enabled : true # disable at prod
+    path: /docs
     default-models-expand-depth: -1
