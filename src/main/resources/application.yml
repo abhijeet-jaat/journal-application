@@ -6,9 +6,15 @@ spring:
       auto-index-creation: true
 
   redis:
-    uri: ${REDIS_URL}
-    #host: ${REDIS_HOST}
-    #port: 16891
+    host: ${REDIS_HOST}
+    username: default
+    password: ${REDIS_PASSWORD}
+    port: 16891
+    ssl:
+      enabled: true
+      connect-timeout: 5s
+      timeout: 3s
+
 
   mail:
     host: smtp.gmail.com
@@ -41,3 +47,7 @@ springdoc:
     enabled : true # disable at prod
     path: /docs
     default-models-expand-depth: -1
+
+jwt:
+  secret: ${JWT_SECRET}          # Base64, from: openssl rand -base64 64
+  expiration-ms: 3600000

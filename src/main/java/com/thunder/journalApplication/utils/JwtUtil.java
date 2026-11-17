@@ -1,64 +1,65 @@
 package com.thunder.journalApplication.utils;
 
-import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class JwtUtil {
 
-    private String SECRET_KEY = "TaK+HaV^uvCHEFsEVfypW#7g9^k*Z8$V";
+    @Value("${jwt.secret}")                 // Base64 string from environment
+    private String secret;
 
-    private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+    @Value("${jwt.expiration-ms}")
+    private long expirationMs;
+
+    private SecretKey key;
+
+    @PostConstruct
+    void init() {
+        // Fails fast at startup if the secret is missing or too short
+        this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+    }
+
+    public String generateToken(String username) {
+        Date now = new Date();
+        return Jwts.builder()
+                .subject(username)
+                .issuedAt(now)
+                .expiration(new Date(now.getTime() + expirationMs))
+                .signWith(key, Jwts.SIG.HS256)
+                .compact();
     }
 
     public String extractUsername(String token) {
-        Claims claims = extractAllClaims(token);
-        return claims.getSubject();
+        return parseClaims(token).getSubject();
     }
 
-    public Date extractExpiration(String token) {
-        return extractAllClaims(token).getExpiration();
+    /** True only if the signature is valid, the token is not expired, and it belongs to this user. */
+    public boolean validateToken(String token, UserDetails userDetails) {
+        try {
+            Claims claims = parseClaims(token);   // throws if signature is bad or token expired
+            return claims.getSubject().equals(userDetails.getUsername());
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
     }
 
-    private Claims extractAllClaims(String token) {
+    private Claims parseClaims(String token) {
         return Jwts.parser()
-                .verifyWith(getSigningKey())
+                .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
     }
-
-    private Boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
-    }
-
-    public String generateToken(String username) {
-        Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username);
-    }
-
-    private String createToken(Map<String, Object> claims, String subject) {
-        return Jwts.builder()
-                .claims(claims)
-                .subject(subject)
-                .header().empty().add("typ","JWT")
-                .and()
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 60 minutes expiration time
-                .signWith(getSigningKey())
-                .compact();
-    }
-
-    public Boolean validateToken(String token) {
-        return !isTokenExpired(token);
-    }
-
-
 }
